@@ -1,4 +1,4 @@
-# web-fcu
+# new-app
 
 ## Project setup
 ```
