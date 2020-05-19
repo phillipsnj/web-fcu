@@ -2,7 +2,7 @@
     <v-container>
         <v-card>
             <v-data-table :headers="headers"
-                          :items="Object.values(this.$root.$data.events)"
+                          :items="Object.values($store.state.events)"
                           :items-per-page="5"
                           class="elevation-1"
                           item-key="id"
@@ -112,10 +112,10 @@
         },
         computed: {
             debug: function () {
-                return this.$root.$data.debug
+                return this.$store.state.debug
             },
             nodes: function () {
-                return Object.values(this.$root.$data.nodes)
+                return Object.values(this.$store.state.nodes)
             }
         },
         methods: {

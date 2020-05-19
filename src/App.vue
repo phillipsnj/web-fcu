@@ -73,15 +73,15 @@
     methods: {
       change_display_component(component) {
         this.drawer = null
-        this.$root.$data.display_component = component
+        this.$store.state.display_component = component
       }
     },
     computed: {
       display_component() {
-        return this.$root.$data.display_component
+        return this.$store.state.display_component
       },
       layout() {
-        return this.$root.$data.layout
+        return this.$store.state.layout
         //return this.$store.state.nodes.data
       },
       debug() {

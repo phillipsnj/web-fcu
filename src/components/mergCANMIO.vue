@@ -25,38 +25,10 @@
             <v-tab-item :key="2">
                 <v-container>
                     <v-row>
-                        <v-card class="xs6 md3 pa-3" flat>
-                            <v-text-field
-                                    label="Produced Startup Delay"
-                                    v-model="node.variables[1]"
-                                    @change="updateNV(node.node,1,node.variables[1])"
-                                    outlined
-                            ></v-text-field>
-                        </v-card>
-                        <v-card class="xs6 md3 pa-3" flat>
-                            <v-text-field
-                                    label="HB Delay"
-                                    v-model="node.variables[2]"
-                                    @change="updateNV(node.node,2,node.variables[2])"
-                                    outlined
-                            ></v-text-field>
-                        </v-card>
-                        <v-card class="xs6 md3 pa-3" flat>
-                            <v-text-field
-                                    label="Servo Speed"
-                                    v-model="node.variables[3]"
-                                    @change="updateNV(node.node,3,node.variables[3])"
-                                    outlined
-                            ></v-text-field>
-                        </v-card>
-                        <v-card class="xs6 md3 pa-3" flat>
-                            <v-text-field
-                                    label="PORTB Pull-ups Enable"
-                                    v-model="node.variables[4]"
-                                    @change="updateNV(node.node,4,node.variables[4])"
-                                    outlined
-                            ></v-text-field>
-                        </v-card>
+                        <NodeVariable v-bind:node="node.node" variable="1" name="Produced Startup Delay"></NodeVariable>
+                        <NodeVariable v-bind:node="node.node" variable="2" name="HB Delay"></NodeVariable>
+                        <NodeVariable v-bind:node="node.node" variable="3" name="Servo Speed"></NodeVariable>
+                        <NodeVariable v-bind:node="node.node" variable="4" name="PORTB Pull-ups Enable"></NodeVariable>
                     </v-row>
                     <v-row v-if="debug">
                         Node Variables {{ node.variables }}
@@ -80,7 +52,7 @@
                             <v-select
                                     v-model="node.variables[SelectedChannelBaseNV]"
                                     label="Channel Type"
-                                    :items="NV_types2"
+                                    :items="nvTypes"
                                     item-text="name"
                                     item-value="id"
                                     outlined
@@ -88,257 +60,164 @@
                             </v-select>
                         </v-card>
                     </v-row>
-                    <v-container v-if="node.variables[SelectedChannelBaseNV]===0">
+                    <v-container v-show="node.variables[SelectedChannelBaseNV]===0">
                         <v-row>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-checkbox
-                                        v-model="flags_array"
-                                        :label="`Trigger Inverted`"
-                                        :value=1
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+1,sumArray(flags_array))"
-                                ></v-checkbox>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-checkbox
-                                        v-model="flags_array"
-                                        :label="`Disable OFF`"
-                                        :value=8
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+1,sumArray(flags_array))"
-                                ></v-checkbox>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-checkbox
-                                        v-model="flags_array"
-                                        :label="`Toggle`"
-                                        :value=16
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+1,sumArray(flags_array))"
-                                ></v-checkbox>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-checkbox
-                                        v-model="flags_array"
-                                        :label="`Event Inverted`"
-                                        :value=64
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+1,sumArray(flags_array))"
-                                ></v-checkbox>
-                            </v-card>
+
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="0"
+                                             name="Trigger Inverted"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="3"
+                                             name="Disable OFF"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="4"
+                                             name="Toggle"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="6"
+                                             name="Event Inverted"></NodeBitVariable>
                         </v-row>
                         <v-row>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-text-field
-                                        label="On Delay"
-                                        readonly
-                                        :value=node.variables[SelectedChannelBaseNV+2]>
-                                </v-text-field>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-text-field
-                                        label="Off Delay"
-                                        readonly
-                                        :value=node.variables[SelectedChannelBaseNV+3]>
-                                </v-text-field>
-                            </v-card>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+2"
+                                          name="On Delay"></NodeVariable>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+3"
+                                          name="Off Delay"></NodeVariable>
                         </v-row>
                     </v-container>
-                    <v-container v-if="node.variables[SelectedChannelBaseNV]===1">
+                    <v-container v-show="node.variables[SelectedChannelBaseNV]===1">
                         <v-row>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-checkbox
-                                        v-model="flags_array"
-                                        :label="`Trigger Inverted`"
-                                        :value=1
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+1,sumArray(flags_array))"
-                                ></v-checkbox>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-checkbox
-                                        v-model="flags_array"
-                                        :label="`Startup`"
-                                        :value=4
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+1,sumArray(flags_array))"
-                                ></v-checkbox>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-checkbox
-                                        v-model="flags_array"
-                                        :label="`Disable Off`"
-                                        :value=8
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+1,sumArray(flags_array))"
-                                ></v-checkbox>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-checkbox
-                                        v-model="flags_array"
-                                        :label="`Action Inverted`"
-                                        :value=32
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+1,sumArray(flags_array))"
-                                ></v-checkbox>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-checkbox
-                                        v-model="flags_array"
-                                        :label="`Event Inverted`"
-                                        :value=64
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+1,sumArray(flags_array))"
-                                ></v-checkbox>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-checkbox
-                                        v-model="flags_array"
-                                        :label="`Action Expedited`"
-                                        :value=128
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+1,sumArray(flags_array))"
-                                ></v-checkbox>
-                            </v-card>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="0"
+                                             name="Trigger Inverted"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="2"
+                                             name="Startup"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="3"
+                                             name="Disable Off"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="5"
+                                             name="Action Inverted"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="6"
+                                             name="Event Inverted"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="7"
+                                             name="Action Expedited"></NodeBitVariable>
                         </v-row>
                         <v-row>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-text-field
-                                        label="Pulse Duration"
-                                        readonly
-                                        :value=node.variables[SelectedChannelBaseNV+2]>
-                                </v-text-field>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-text-field
-                                        label="Flash Period"
-                                        readonly
-                                        :value=node.variables[SelectedChannelBaseNV+3]>
-                                </v-text-field>
-                            </v-card>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+2"
+                                          name="Pulse Duration"></NodeVariable>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+3"
+                                          name="Flash Period"></NodeVariable>
                         </v-row>
                     </v-container>
-                    <v-container v-if="node.variables[SelectedChannelBaseNV]===2">
+                    <v-container v-show="node.variables[SelectedChannelBaseNV]===2">
                         <v-row>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-checkbox
-                                        v-model="flags_array"
-                                        :label="`Trigger Inverted`"
-                                        :value=1
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+1,sumArray(flags_array))"
-                                ></v-checkbox>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-checkbox
-                                        v-model="flags_array"
-                                        :label="`Cutoff`"
-                                        :value=2
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+1,sumArray(flags_array))"
-                                ></v-checkbox>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-checkbox
-                                        v-model="flags_array"
-                                        :label="`Startup`"
-                                        :value=4
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+1,sumArray(flags_array))"
-                                ></v-checkbox>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-checkbox
-                                        v-model="flags_array"
-                                        :label="`Action Inverted`"
-                                        :value=32
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+1,sumArray(flags_array))"
-                                ></v-checkbox>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-checkbox
-                                        v-model="flags_array"
-                                        :label="`Event Inverted`"
-                                        :value=64
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+1,sumArray(flags_array))"
-                                ></v-checkbox>
-                            </v-card>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="0"
+                                             name="Trigger Inverted"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="1"
+                                             name="Cutoff"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="2"
+                                             name="Startup"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="5"
+                                             name="Action Inverted"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="6"
+                                             name="Event Inverted"></NodeBitVariable>
                         </v-row>
                         <v-row>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-text-field
-                                        label="OFF Position"
-                                        readonly
-                                        :value=node.variables[SelectedChannelBaseNV+2]>
-                                </v-text-field>
-                                <v-slider
-                                        v-model="node.variables[SelectedChannelBaseNV+2]"
-                                        class="align-center"
-                                        :max="234"
-                                        :min="0"
-                                        hide-details
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+2,node.variables[SelectedChannelBaseNV+2])"
-                                >
-                                    <template v-slot:prepend>
-                                        <v-icon
-                                                color="blue"
-                                                @click="updateNV(node.node,SelectedChannelBaseNV+2,node.variables[SelectedChannelBaseNV+2]-1)"
-                                        >
-                                            mdi-minus
-                                        </v-icon>
-                                    </template>
-
-                                    <template v-slot:append>
-                                        <v-icon
-                                                color="blue"
-                                                @click="updateNV(node.node,SelectedChannelBaseNV+2,node.variables[SelectedChannelBaseNV+2]+1)"
-                                        >
-                                            mdi-plus
-                                        </v-icon>
-                                    </template>
-                                </v-slider>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-text-field
-                                        label="ON Position"
-                                        readonly
-                                        :value=node.variables[SelectedChannelBaseNV+3]>
-                                </v-text-field>
-                                <v-slider
-                                        v-model="node.variables[SelectedChannelBaseNV+3]"
-                                        class="align-center"
-                                        :max="234"
-                                        :min="0"
-                                        hide-details
-                                        @change="updateNV(node.node,SelectedChannelBaseNV+3,node.variables[SelectedChannelBaseNV+3])"
-
-                                >
-
-                                    <template v-slot:prepend>
-                                        <v-icon
-                                                color="blue"
-                                                @click="updateNV(node.node,SelectedChannelBaseNV+3,node.variables[SelectedChannelBaseNV+3]-1)"
-                                        >
-                                            mdi-minus
-                                        </v-icon>
-                                    </template>
-
-                                    <template v-slot:append>
-                                        <v-icon
-                                                color="blue"
-                                                @click="updateNV(node.node,SelectedChannelBaseNV+3,node.variables[SelectedChannelBaseNV+3]+1)"
-                                        >
-                                            mdi-plus
-                                        </v-icon>
-                                    </template>
-                                </v-slider>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-text-field
-                                        label="OFF to ON Speed"
-                                        readonly
-                                        :value=node.variables[SelectedChannelBaseNV+4]>
-                                </v-text-field>
-                            </v-card>
-                            <v-card class="xs6 md3 pa-3" flat>
-                                <v-text-field
-                                        label="ON to OFF Speed"
-                                        readonly
-                                        :value=node.variables[SelectedChannelBaseNV+5]>
-                                </v-text-field>
-                            </v-card>
+                            <NodeSliderVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+2"
+                                                name="Off Position"></NodeSliderVariable>
+                            <NodeSliderVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+3"
+                                                name="On Position"></NodeSliderVariable>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+4"
+                                          name="OFF to ON Speed"></NodeVariable>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+5"
+                                          name="ON to OFF Speed"></NodeVariable>
                         </v-row>
                     </v-container>
-
+                    <v-container v-show="node.variables[SelectedChannelBaseNV]===3">
+                        <v-row>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="0"
+                                             name="Trigger Inverted"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="1"
+                                             name="Cutoff"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="2"
+                                             name="Startup"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="5"
+                                             name="Action Inverted"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="6"
+                                             name="Event Inverted"></NodeBitVariable>
+                        </v-row>
+                        <v-row>
+                            <NodeSliderVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+2"
+                                                name="Upper Position"></NodeSliderVariable>
+                            <NodeSliderVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+3"
+                                                name="Lower Position"></NodeSliderVariable>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+4"
+                                          name="Bounce Coefficient"></NodeVariable>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+5"
+                                          name="Pull Speed"></NodeVariable>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+6"
+                                          name="Pull pause"></NodeVariable>
+                        </v-row>
+                    </v-container>
+                    <v-container v-show="node.variables[SelectedChannelBaseNV]===4">
+                        <v-row>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="0"
+                                             name="Trigger Inverted"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="1"
+                                             name="Cutoff"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="2"
+                                             name="Startup"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="5"
+                                             name="Action Inverted"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="6"
+                                             name="Event Inverted"></NodeBitVariable>
+                        </v-row>
+                        <v-row>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+2"
+                                                name="Num Pos"></NodeVariable>
+                            <NodeSliderVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+3"
+                                                name="Position 1"></NodeSliderVariable>
+                            <NodeSliderVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+4"
+                                          name="Position 2" v-if="node.variables[SelectedChannelBaseNV+2] > 1"></NodeSliderVariable>
+                            <NodeSliderVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+5"
+                                          name="Position 3" v-if="node.variables[SelectedChannelBaseNV+2] > 2"></NodeSliderVariable>
+                            <NodeSliderVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+6"
+                                          name="Position 4" v-if="node.variables[SelectedChannelBaseNV+2] > 3"></NodeSliderVariable>
+                        </v-row>
+                    </v-container>
+                    <v-container v-show="node.variables[SelectedChannelBaseNV]===5">
+                        <v-row>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="0"
+                                             name="Trigger Inverted"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="5"
+                                             name="Action Inverted"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="6"
+                                             name="Event Inverted"></NodeBitVariable>
+                        </v-row>
+                        <v-row>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+3"
+                                                name="Threshold"></NodeVariable>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+4"
+                                                name="Hysteresis"></NodeVariable>
+                        </v-row>
+                    </v-container>
+                    <v-container v-show="node.variables[SelectedChannelBaseNV]===6">
+                        <v-row>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="0"
+                                             name="Trigger Inverted"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="5"
+                                             name="Action Inverted"></NodeBitVariable>
+                            <NodeBitVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+1" bit="6"
+                                             name="Event Inverted"></NodeBitVariable>
+                        </v-row>
+                        <v-row>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+2"
+                                          name="Do Setup"></NodeVariable>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+3"
+                                                name="Threshold"></NodeVariable>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+3"
+                                          name="Hysteresis"></NodeVariable>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+3"
+                                          name="Offset H"></NodeVariable>
+                            <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+3"
+                                          name="Offset L"></NodeVariable>
+                        </v-row>
+                    </v-container>
                     <v-row v-if="debug">
                         Node Variables {{ node.variables }}
+                        Base NV {{ SelectedChannelBaseNV }}
                     </v-row>
                 </v-container>
             </v-tab-item>
@@ -377,23 +256,15 @@
                                                 </v-col>
                                                 <v-col cols="12" sm="6" md="4">
                                                     <v-text-field v-model="editedEvent.actionId"
-                                                                  label="actionId"></v-text-field>
+                                                                  label="actionId" readonly></v-text-field>
                                                 </v-col>
                                                 <v-col cols="12" sm="6" md="4">
                                                     <v-text-field
                                                             v-model="node.actions[editedEvent.actionId].variables[0]"
-                                                            label="No of Event Variables"></v-text-field>
+                                                            label="No of Event Variables" readonly></v-text-field>
                                                 </v-col>
                                             </v-row>
                                             <v-row v-for="n in numberEventVariables" :key="n" dense>
-                                                <v-col cols="12" sm="6" md="4">
-                                                    <v-text-field
-                                                            label="Variable"
-                                                            :value="n"
-                                                            readonly
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
                                                 <v-col cols="12" sm="6" md="4" v-if="n==1">
                                                     <v-text-field
                                                             label="Value"
@@ -405,7 +276,7 @@
                                                 </v-col>
                                                 <v-col v-if="n>1">
                                                     <v-select
-                                                            label="Select Action"
+                                                            :label="`Action ${n-1}`"
                                                             v-model="node.actions[editedEvent.actionId].variables[n]"
                                                             :items="event_actions"
                                                             item-text="name"
@@ -445,6 +316,7 @@
             <v-tab-item :key="4">
                 <v-layout row wrap>
                     <h2>mergDefault</h2>
+
                     <p>Node ID :: {{ nodeId }}</p>
                     <p>Node {{ node }}</p>
                 </v-layout>
@@ -457,21 +329,29 @@
 <script>
     import NodeParameters from './NodeParameters'
     import {nodeMixin} from '../mixins/nodeMixin.js'
+    import NodeVariable from './NodeVariable'
+    import NodeBitVariable from './NodeBitVariable'
+    import NodeSliderVariable from './NodeSliderVariable'
 
     export default {
         name: "mergDefault",
         mixins: [nodeMixin],
         components: {
             // eslint-disable-next-line
-            NodeParameters
+            NodeParameters, NodeVariable, NodeBitVariable, NodeSliderVariable
         },
         data: function () {
             return {
                 SelectedChannel: 1,
                 SelectedChannelBaseNV: 16,
-                flags_array: [],
                 event_actions: [],
-                NV_types: {0: "Input", 1: "Output", 2: "Servo", 3: "Bounce", 4: "Multi", 5: "Analogue", 6: "Magnet"},
+                NV_types1: [
+                    {"id": 0, "name": "Input"},
+                    {"id": 1, "name": "Output"},
+                    {"id": 2, "name": "Servo"},
+                    {"id": 3, "name": "Bounce"},
+                    {"id": 4, "name": "Multi"},
+                ],
                 NV_types2: [
                     {"id": 0, "name": "Input"},
                     {"id": 1, "name": "Output"},
@@ -486,8 +366,6 @@
             }
         },
         mounted() {
-            this.flags_array = this.getArray(this.node.variables[this.SelectedChannelBaseNV + 1])
-
             // eslint-disable-next-line no-console
             console.log(`Local Mounted Completed: ${this.nodeId} :: ${this.node.node} :: ${this.node.EvCount}`)
             /*if (this.node.EvCount > 0) {
@@ -502,6 +380,14 @@
                 } else {
                     return 20
                 }
+            },
+            nvTypes: function() {
+                console.log(`Selected Channel ${this.SelectedChannel}`)
+                if (this.SelectedChannel < 9) {
+                    return this.NV_types1
+                } else {
+                    return this.NV_types2
+                }
             }
         },
         methods: {
@@ -511,8 +397,8 @@
                 //console.log(`getEventVariables() ${this.node.actions[actionId].variables[0]}`)
                 //this.EventIndex = [...Array(this.node.actions[actionId].variables[0]).keys()]
                 this.EventIndex = this.createSelectIndex(1, this.node.parameters[5])
-                    //this.EventIndex = [1,2,3]
-                    //this.SelectedEventVariable = actionId
+                //this.EventIndex = [1,2,3]
+                //this.SelectedEventVariable = actionId
 
                 /*for (let i = 1; i <= this.node.parameters[5]; i++) {
                     this.$socket.emit('REVAL', {"nodeId": this.node.node, "actionId": actionId, "valueId": i})
@@ -526,13 +412,11 @@
                 for (let i = this.SelectedChannelBaseNV; i <= this.SelectedChannelBaseNV + 6; i++) {
                     this.getVariable(i)
                 }
-                this.flags_array = this.getArray(this.node.variables[this.SelectedChannelBaseNV + 1])
             },
             updateChannelType: function () {
                 for (let i = this.SelectedChannelBaseNV; i <= this.SelectedChannelBaseNV + 6; i++) {
                     this.getVariable(i)
                 }
-                this.flags_array = this.getArray(this.node.variables[this.SelectedChannelBaseNV + 1])
             },
             update_event_actions: function () {
                 // eslint-disable-next-line no-console
@@ -560,9 +444,15 @@
                         this.event_actions.push({"id": y + 2, "name": `Ch-${x} OFF`})
                     } else if (this.node.variables[i] == 4) {
                         this.event_actions.push({"id": y, "name": `Ch-${x} AT1`})
-                        this.event_actions.push({"id": y + 1, "name": `Ch-${x} AT2`})
-                        this.event_actions.push({"id": y + 2, "name": `Ch-${x} AT3`})
-                        this.event_actions.push({"id": y + 3, "name": `Ch-${x} AT4`})
+                        if (this.node.variables[i+2] > 1) {
+                            this.event_actions.push({"id": y + 1, "name": `Ch-${x} AT2`})
+                        }
+                        if (this.node.variables[i+2] > 2) {
+                            this.event_actions.push({"id": y + 2, "name": `Ch-${x} AT3`})
+                        }
+                        if (this.node.variables[i+2] > 3) {
+                            this.event_actions.push({"id": y + 3, "name": `Ch-${x} AT4`})
+                        }
                     }
                     x = x + 1
                     y = y + 5

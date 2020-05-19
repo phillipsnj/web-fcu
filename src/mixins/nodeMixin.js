@@ -28,26 +28,27 @@ export const nodeMixin = {
     mounted() {
         //console.log(`mounted : ${this.nodeId} :: ${this.node.node} :: ${this.node.EvCount}`)
         //this.nodeId = this.$root.$data.selected_node_id
-        /*for (let i = 1; i <= this.node.parameters[0]; i++) {
-            this.$socket.emit('RQNPN', {"nodeId": this.node.node, "parameter": i})
-        }*/
-        //this.$socket.emit('NVRD', {"nodeId": this.nodeId, "variableId": 1})
-        //this.getVariable(1)
-
+        for (let i = 1; i <= this.node.parameters[0]; i++) {
+            this.$root.send('RQNPN', {"nodeId": this.node.node, "parameter": i})
+        }
+        for (let i = 1; i <= this.node.parameters[0]; i++) {
+            this.getVariable(i)
+        }
         // eslint-disable-next-line no-console
-        //console.log(`Mounted Completed: ${this.nodeId} :: ${this.node.node} :: ${this.node.EvCount}`)
-        /*if (this.node.EvCount > 0) {
-            this.$socket.emit('NERD', {"nodeId": this.nodeId})
-        }*/
-        this.nodeId = this.$root.$data.selected_node_id
-        console.log(`Mounted Completed: ${this.nodeId} `)
+        console.log(`Mounted Completed: ${this.nodeId} :: ${this.node.node} :: ${this.node.EvCount}`)
+        if (this.node.EvCount > 0) {
+            console.log(`NERD : ${this.node.node}`)
+            this.$root.send('NERD', {"nodeId": this.node.node})
+        }
+        this.nodeId = this.$store.state.selected_node_id
+        console.log(`Mounted Completed: ${this.node.node} `)
     },
     computed: {
         debug: function () {
-            return this.$root.$data.debug
+            return this.$store.state.debug
         },
         node: function () {
-            return this.$root.$data.nodes[this.$root.$data.selected_node_id]
+            return this.$store.state.nodes[this.$store.state.selected_node_id]
         },
         moduleVersion: function () {
             return `${this.node.parameters[7]}.${String.fromCharCode(this.node.parameters[2])}`
@@ -60,15 +61,16 @@ export const nodeMixin = {
     methods: {
         getVariable: function (id) {
             console.log('getVariable : ' + id)
+            this.$root.send('NVRD', {"nodeId": this.node.node, "variableId": id})
         },
         updateNV: function (node_id, variableId, variableValue) {
             // eslint-disable-next-line no-console
             console.log(`updateNV(${variableId},${variableValue})`)
-            /*this.$socket.emit('NVSET', {
+            this.$root.send('NVSET', {
                 "nodeId": this.node.node,
                 "variableId": variableId,
                 "variableValue": variableValue
-            })*/
+            })
         },
         createSelectIndex: function (start, finish) {
             let output = []
@@ -88,13 +90,13 @@ export const nodeMixin = {
         updateEV: function (nodeId, eventName, actionId, eventId, eventVal) {
             // eslint-disable-next-line no-console
             console.log(`editEvent(${nodeId},${eventName},${actionId},${eventId},${eventVal}`)
-            /*this.$socket.emit('EVLRN', {
+            this.$root.send('EVLRN', {
                 "nodeId": this.node.node,
                 "actionId": actionId,
                 "eventName": eventName,
                 "eventId": eventId,
                 "eventVal": eventVal
-            })*/
+            })
         },
         getEventVariables: function (actionId) {
             // eslint-disable-next-line no-console
@@ -104,9 +106,9 @@ export const nodeMixin = {
             this.EventIndex = this.createSelectIndex(1, this.node.parameters[5])
             //this.EventIndex = [1,2,3]
             //this.SelectedEventVariable = actionId
-            /*for (let i = 1; i <= this.node.parameters[5]; i++) {
-                this.$socket.emit('REVAL', {"nodeId": this.node.node, "actionId": actionId, "valueId": i})
-            }*/
+            for (let i = 1; i <= this.node.parameters[5]; i++) {
+                this.$root.send('REVAL', {"nodeId": this.node.node, "actionId": actionId, "valueId": i})
+            }
 
         },
         getAllEventVariables: function () {
@@ -121,7 +123,7 @@ export const nodeMixin = {
         deleteEvent: function (event) {
             // eslint-disable-next-line no-console
             console.log(`deleteEvent : ${this.node.node} : ${event}`)
-            //this.$socket.emit('EVULN', {"nodeId": this.node.node, "eventName": event})
+            this.$root.send('EVULN', {"nodeId": this.node.node, "eventName": event})
         },
         getArray: function (byteArray) {
             let output = []

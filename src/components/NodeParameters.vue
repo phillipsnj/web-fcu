@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <h1> Parameters {{ node.node }}</h1>
+<!--        <h1> Parameters {{ node.node }}</h1>-->
         <v-container>
             <v-row>
                 <v-card class="xs6 md3 pa-3" flat>

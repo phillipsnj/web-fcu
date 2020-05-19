@@ -51,16 +51,16 @@
         data: () => ({}),
         computed: {
             nodes: function () {
-                return this.$root.$data.nodes
+                return this.$store.state.nodes
             },
             events() {
-                return this.$root.$data.events
+                return this.$store.state.events
             },
             cbusErrors() {
-                return this.$root.$data.cbusErrors
+                return this.$store.state.cbusErrors
             },
             layout() {
-                return this.$root.$data.layout
+                return this.$store.state.layout
             }
         }
     }

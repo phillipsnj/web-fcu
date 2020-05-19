@@ -14,17 +14,17 @@
                 </v-text-field>
                 <v-text-field label="Sub Title Alternative"
                               placeholder="Sub Title"
-                              v-model="$root.$data.layout.subTitle">
+                              v-model="$store.state.layout.subTitle">
                 </v-text-field>
                 <v-checkbox
-                        v-model="$root.$data.debug"
+                        v-model="$store.state.debug"
                         label="Debug Mode">
                 </v-checkbox>
             </v-col>
         </v-row>
-        <v-row v-if="$root.$data.debug">
+        <v-row v-if="$store.state.debug">
             <h2>Debug Mode</h2>
-            <p>{{ $root.$data.layout }}</p>
+            <p>{{ $store.state.layout }}</p>
         </v-row>
     </v-container>
 
@@ -36,16 +36,16 @@
         name: 'settings',
         data: function () {
             return {
-                title: this.$root.$data.layout.title,
-                subTitle: this.$root.$data.layout.subTitle,
+                title: this.$store.state.layout.title,
+                subTitle: this.$store.state.layout.subTitle,
             }
         },
         methods: {
             updateTitle() {
-                this.$root.$data.layout.title = this.title
+                this.$store.state.layout.title = this.title
             },
             updateSubTitle() {
-                this.$root.$data.layout.subTitle = this.subTitle
+                this.$store.state.layout.subTitle = this.subTitle
             },
         },
     }

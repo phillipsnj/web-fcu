@@ -2,6 +2,7 @@
     <v-container>
         <v-toolbar flat>
             <v-toolbar-title>Default Module Type Page : {{ nodeId }}</v-toolbar-title>
+            <v-spacer></v-spacer>
         </v-toolbar>
         <v-tabs>
             <v-tab :key="1">
@@ -20,22 +21,8 @@
                 <NodeParameters v-bind:node="node"></NodeParameters>
             </v-tab-item>
             <v-tab-item :key="2">
-                <v-row wrap>
-                    <v-card class="pa-2" flat min-width="200">
-                        <v-select
-                                v-model="SelectedVariable"
-                                :items="VariableIndexes"
-                                label="Variable"
-                                @change="getVariable(SelectedVariable)"
-                        ></v-select>
-                    </v-card>
-                    <v-card class="pa-2" flat min-width="200">
-                        <v-text-field
-                                label="Value"
-                                v-model="node.variables[SelectedVariable]"
-                                @change="updateNV(node.node,SelectedVariable,node.variables[SelectedVariable])"
-                        ></v-text-field>
-                    </v-card>
+                <v-row>
+                    <NodeVariable v-bind:node="nodeId" v-bind:variable="n" v-for="n in node.parameters[6]" :key="n"></NodeVariable>
                 </v-row>
                 <v-row v-if="debug">
                     {{ node.variables }}
@@ -79,25 +66,8 @@
                                                                   label="actionId"></v-text-field>
                                                 </v-col>
                                             </v-row>
-                                            <v-row v-for="n in node.parameters[5]" :key="n" dense>
-                                                <v-col cols="12" sm="6" md="4">
-                                                    <v-text-field
-                                                            label="Variable"
-                                                            :value="n"
-                                                            readonly
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" sm="6" md="4">
-                                                    <v-text-field
-                                                            label="Value"
-                                                            v-model="node.actions[editedEvent.actionId].variables[n]"
-                                                            @change="updateEV(node.node, node.actions[editedEvent.actionId].event, node.actions[editedEvent.actionId].actionId,
-                                                      n, parseInt(node.actions[editedEvent.actionId].variables[n]))"
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-
+                                            <v-row>
+                                                <NodeEventVariable v-bind:node="nodeId" v-bind:action="editedEvent.actionId" v-bind:variable="n" v-for="n in node.parameters[5]" :key="n"></NodeEventVariable>
                                             </v-row>
                                         </v-container>
                                     </v-card-text>
@@ -149,13 +119,15 @@
 <script>
     import NodeParameters from './NodeParameters'
     import {nodeMixin} from '../mixins/nodeMixin.js'
+    import NodeVariable from './NodeVariable'
+    import NodeEventVariable from './NodeEventVariable'
 
     export default {
         mixins: [nodeMixin],
         name: "mergDefault",
         components: {
             // eslint-disable-next-line
-            NodeParameters
+            NodeParameters, NodeVariable, NodeEventVariable
         },
         //props: ['node'],
         data: function () {
