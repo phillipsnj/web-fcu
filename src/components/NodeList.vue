@@ -51,7 +51,7 @@
     methods: {
       checkModules: function() {
         console.log(`checkModules`)
-        //this.$socket.emit('QNN')
+        this.$root.send('QNN')
       },
       editNode: function(node) {
         console.log(`editNode : ${node.node} : ${node.component}`)

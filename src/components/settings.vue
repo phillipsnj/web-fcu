@@ -5,16 +5,12 @@
                 <v-text-field label="Title"
                               placeholder="Title"
                               v-model="title"
-                              @change="updateTitle()">
+                              @change="update()">
                 </v-text-field>
                 <v-text-field label="Sub Title"
                               placeholder="Sub Title"
                               v-model="subTitle"
-                              @change="updateSubTitle()">
-                </v-text-field>
-                <v-text-field label="Sub Title Alternative"
-                              placeholder="Sub Title"
-                              v-model="$store.state.layout.subTitle">
+                              @change="update()">
                 </v-text-field>
                 <v-checkbox
                         v-model="$store.state.debug"
@@ -22,10 +18,12 @@
                 </v-checkbox>
             </v-col>
         </v-row>
-        <v-row v-if="$store.state.debug">
+        <v-container v-if="$store.state.debug">
+            <v-row>
             <h2>Debug Mode</h2>
-            <p>{{ $store.state.layout }}</p>
-        </v-row>
+            </v-row>
+            <v-row><p>{{ $store.state.layout }}</p></v-row>
+        </v-container>
     </v-container>
 
 </template>
@@ -36,17 +34,25 @@
         name: 'settings',
         data: function () {
             return {
-                title: this.$store.state.layout.title,
-                subTitle: this.$store.state.layout.subTitle,
+                title: this.$store.state.layout.layoutDetails.title,
+                subTitle: this.$store.state.layout.layoutDetails.subTitle,
             }
         },
         methods: {
             updateTitle() {
-                this.$store.state.layout.title = this.title
+                this.$store.state.layout.layoutDetails.title = this.title
             },
             updateSubTitle() {
-                this.$store.state.layout.subTitle = this.subTitle
+                this.$store.state.layout.layoutDetails.subTitle = this.subTitle
             },
+            update() {
+                console.log(`Layout Details ${JSON.stringify(this.$store.state.layoutDetails)}`)
+                this.$store.state.layout.layoutDetails.title = this.title
+                this.$store.state.layout.layoutDetails.subTitle = this.subTitle
+                console.log(`Layout Details ${JSON.stringify(this.$store.state.layout)}`)
+                this.$root.send('UPDATE_LAYOUT_DETAILS', this.$store.state.layout)
+                this.editDialog = false
+            }
         },
     }
 

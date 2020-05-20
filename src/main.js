@@ -7,7 +7,8 @@ import io from "socket.io-client"
 
 //let nodes = require('../config/mergNodes_TEST.json')
 //let events = require('../config/mergEvents_TEST.json')
-let layout = require('../config/layoutConfig.json')
+//let layout = require('../config/layoutConfig.json')
+//let eventDetails = require('../config/eventDetails.json')
 
 Vue.config.productionTip = false
 
@@ -35,12 +36,13 @@ new Vue({
         nodes: [],
         cbusErrors: [],
         dccErrors: [],
-        layout: layout,
         display_component: "hello_world",
         selected_node_id: 0,
         debug: false
     },
     created() {
+        //this.$store.state.layout = layout
+        //this.$store.state.eventDetails = eventDetails
         socket.on('nodes', (data) => {
             this.$store.state.nodes = data
         })
@@ -49,6 +51,9 @@ new Vue({
         })
         socket.on('cbusError', (data) => {
             this.$store.state.cbusErrors = data
+        })
+        socket.on('layoutDetails', (data) => {
+            this.$store.state.layout = data
         })
 
     },

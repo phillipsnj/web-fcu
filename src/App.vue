@@ -23,8 +23,8 @@
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title>
-        <span class="white--text text--darken-1 font-weight-bold display-1 roboto">{{ this.$root.$data.layout.title }}</span>
-        <span class="font-weight-light text-md-center"> {{ this.$root.$data.layout.subTitle }}</span>
+        <span class="white--text text--darken-1 font-weight-bold display-1 roboto">{{ this.$store.state.layout.layoutDetails.title }}</span>
+        <span class="font-weight-light text-md-center"> {{ this.$store.state.layout.layoutDetails.subTitle }}</span>
       </v-toolbar-title>
     </v-app-bar>
 

@@ -38,7 +38,7 @@
             </v-tab-item>
             <v-tab-item :key="5">
                 <v-card flat>
-                    <v-card-text>{{ layout }}</v-card-text>
+                    <v-card-text>{{ layoutDetails }}</v-card-text>
                 </v-card>
             </v-tab-item>
         </v-tabs>
@@ -59,7 +59,7 @@
             cbusErrors() {
                 return this.$store.state.cbusErrors
             },
-            layout() {
+            layoutDetails() {
                 return this.$store.state.layout
             }
         }

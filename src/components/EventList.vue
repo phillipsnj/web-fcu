@@ -7,7 +7,9 @@
                           class="elevation-1"
                           item-key="id"
                           :search="search">
-
+                <template v-slot:item.id="{ item }">
+                    {{ getEventName(item.id) }}
+                </template>
                 <template v-slot:item.status="{ item }">
                     <v-chip color="green" dark v-if="item.status=='on'">On</v-chip>
                     <v-chip color="red" dark v-else>Off</v-chip>
@@ -23,6 +25,27 @@
                                 single-line
                                 hide-details
                         ></v-text-field>
+                        <v-dialog v-model="editDialog" max-width="500px">
+                            <v-card>
+                                <v-card-title>
+                                    <span class="headline">Edit Event</span>
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-container grid-list-md>
+                                        {{ editedEvent["name"] }}
+                                        <v-row>
+                                            <v-text-field v-model="editedEvent.name"
+                                                          label="Event Id"></v-text-field>
+                                        </v-row>
+                                    </v-container>
+                                </v-card-text>
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="blue darken-1" text @click="editDialog=false">Cancel</v-btn>
+                                    <v-btn color="blue darken-1" text @click="update(editedEvent)">Update</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
                         <v-dialog v-model="dialog" max-width="500px">
                             <v-card>
                                 <v-card-title>
@@ -70,6 +93,7 @@
                     </v-toolbar>
                 </template>
                 <template v-slot:item.actions="{ item }">
+                    <v-btn color="blue darken-1" text @click="editEvent(item)">Edit</v-btn>
                     <v-btn color="blue darken-1" text @click="teachEvent(item)">Teach</v-btn>
                     <v-btn color="blue darken-1" text @click="sendEvent(item.nodeId, item.eventId, item.type, 'On')">
                         On
@@ -100,6 +124,7 @@
                     {text: 'Actions', value: 'actions', sortable: false}
                 ],
                 dialog: false,
+                editDialog: false,
                 editedIndex: -1,
                 editedEvent: {
                     name: ''
@@ -119,8 +144,23 @@
             }
         },
         methods: {
+            getEventName(id) {
+                if (id in this.$store.state.layout.eventDetails) {
+                    return this.$store.state.layout.eventDetails[id].name
+                } else {
+                    return id
+                }
+            },
             sendEvent(nodeId, eventId, type, action) {
                 console.log(`sendEvent ${type} : ${nodeId} : ${eventId} : ${action}`)
+            },
+            editEvent(item) {
+                //let Event = Object.assign({}, item)
+                console.log(`Edit Event ${item.id}`)
+                //this.editedEvent = Object.assign({}, item)
+                this.editedEvent = item
+                this.editedEvent["name"] = this.getEventName(item.id)
+                this.editDialog = true
             },
             teachEvent(item) {
                 // this.editedIndex = this.events.indexOf(item)
@@ -164,7 +204,15 @@
                                     this.editedIndex = -1
                                 }, 300)*/
             },
-
+            update(Event) {
+                console.log(`Event Details ${JSON.stringify(this.$store.state.eventDetails)}`)
+                this.$store.state.layout.eventDetails[Event.id] = {}
+                this.$store.state.layout.eventDetails[Event.id].name = Event.name
+                this.$store.state.layout.eventDetails[Event.id].colour = "red"
+                console.log(`Layout Details ${JSON.stringify(this.$store.state.layout)}`)
+                this.$root.send('UPDATE_LAYOUT_DETAILS', this.$store.state.layout)
+                this.editDialog = false
+            },
             teach(selectedNode, selectedEvent) {
                 // eslint-disable-next-line no-console
                 console.log(`Teach : ${selectedNode.node} : : ${selectedEvent.id}`)

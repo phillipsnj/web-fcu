@@ -125,6 +125,13 @@ export const nodeMixin = {
             console.log(`deleteEvent : ${this.node.node} : ${event}`)
             this.$root.send('EVULN', {"nodeId": this.node.node, "eventName": event})
         },
+        getEventName(id) {
+            if (id in this.$store.state.layout.eventDetails) {
+                return this.$store.state.layout.eventDetails[id].name
+            } else {
+                return id
+            }
+        },
         getArray: function (byteArray) {
             let output = []
             output.push(byteArray & 1 ? 1 : 0)

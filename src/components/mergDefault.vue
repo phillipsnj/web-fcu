@@ -75,6 +75,9 @@
                             </v-dialog>
                         </v-toolbar>
                     </template>
+                    <template v-slot:item.event="{ item }">
+                        {{ getEventName(item.event) }}
+                    </template>
                     <template v-slot:item.actions="{ item }">
                         <v-icon
                                 small
