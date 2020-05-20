@@ -1,7 +1,9 @@
-# new-app
+# web-fcu
 
 ## Project setup
 ```
+Requires the cbusAdminServer to be up and running.
+
 npm install
 ```
 

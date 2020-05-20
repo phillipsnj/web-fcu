@@ -76,7 +76,7 @@
                         </v-toolbar>
                     </template>
                     <template v-slot:item.event="{ item }">
-                        {{ getEventName(item.event) }}
+                        <p>{{ getEventName(item.event) }}</p>
                     </template>
                     <template v-slot:item.actions="{ item }">
                         <v-icon

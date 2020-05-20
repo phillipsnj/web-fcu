@@ -8,7 +8,7 @@
                           item-key="id"
                           :search="search">
                 <template v-slot:item.id="{ item }">
-                    {{ getEventName(item.id) }}
+                    <p :class="getEventColour(item.id)">{{ getEventName(item.id) }}</p>
                 </template>
                 <template v-slot:item.status="{ item }">
                     <v-chip color="green" dark v-if="item.status=='on'">On</v-chip>
@@ -36,6 +36,14 @@
                                         <v-row>
                                             <v-text-field v-model="editedEvent.name"
                                                           label="Event Id"></v-text-field>
+                                        </v-row>
+                                    </v-container>
+                                </v-card-text>
+                                <v-card-text>
+                                    <v-container grid-list-md>
+                                        <v-row>
+                                            <v-text-field v-model="editedEvent.colour"
+                                                          label="Colour"></v-text-field>
                                         </v-row>
                                     </v-container>
                                 </v-card-text>
@@ -127,7 +135,8 @@
                 editDialog: false,
                 editedIndex: -1,
                 editedEvent: {
-                    name: ''
+                    name: '',
+                    colour: ''
                 },
                 selectedNode: '',
                 SelectedEventNode: '',
@@ -151,6 +160,20 @@
                     return id
                 }
             },
+            getEventColour(id) {
+                if (id in this.$store.state.layout.eventDetails) {
+                    return this.$store.state.layout.eventDetails[id].colour + "--text"
+                } else {
+                    return "black--text"
+                }
+            },
+            getEventColourName(id) {
+                if (id in this.$store.state.layout.eventDetails) {
+                    return this.$store.state.layout.eventDetails[id].colour
+                } else {
+                    return "black"
+                }
+            },
             sendEvent(nodeId, eventId, type, action) {
                 console.log(`sendEvent ${type} : ${nodeId} : ${eventId} : ${action}`)
             },
@@ -160,6 +183,7 @@
                 //this.editedEvent = Object.assign({}, item)
                 this.editedEvent = item
                 this.editedEvent["name"] = this.getEventName(item.id)
+                this.editedEvent["colour"] = this.getEventColourName(item.id)
                 this.editDialog = true
             },
             teachEvent(item) {
@@ -208,7 +232,7 @@
                 console.log(`Event Details ${JSON.stringify(this.$store.state.eventDetails)}`)
                 this.$store.state.layout.eventDetails[Event.id] = {}
                 this.$store.state.layout.eventDetails[Event.id].name = Event.name
-                this.$store.state.layout.eventDetails[Event.id].colour = "red"
+                this.$store.state.layout.eventDetails[Event.id].colour = this.editedEvent.colour
                 console.log(`Layout Details ${JSON.stringify(this.$store.state.layout)}`)
                 this.$root.send('UPDATE_LAYOUT_DETAILS', this.$store.state.layout)
                 this.editDialog = false
