@@ -27,11 +27,11 @@ export const nodeMixin = {
     },
     mounted() {
         //console.log(`mounted : ${this.nodeId} :: ${this.node.node} :: ${this.node.EvCount}`)
-        //this.nodeId = this.$root.$data.selected_node_id
+        this.nodeId = this.$store.state.selected_node_id
         for (let i = 1; i <= this.node.parameters[0]; i++) {
             this.$root.send('RQNPN', {"nodeId": this.node.node, "parameter": i})
         }
-        for (let i = 1; i <= this.node.parameters[0]; i++) {
+        for (let i = 1; i <= this.node.parameters[6]; i++) {
             this.getVariable(i)
         }
         // eslint-disable-next-line no-console
@@ -40,7 +40,7 @@ export const nodeMixin = {
             console.log(`NERD : ${this.node.node}`)
             this.$root.send('NERD', {"nodeId": this.node.node})
         }
-        this.nodeId = this.$store.state.selected_node_id
+
         console.log(`Mounted Completed: ${this.node.node} `)
     },
     computed: {
@@ -126,10 +126,19 @@ export const nodeMixin = {
             this.$root.send('EVULN', {"nodeId": this.node.node, "eventName": event})
         },
         getEventName(id) {
+            //console.log(`getEventName ${id}`)
             if (id in this.$store.state.layout.eventDetails) {
                 return this.$store.state.layout.eventDetails[id].name
             } else {
                 return id
+            }
+        },
+        getEventColour(id) {
+            //console.log(`getEventColour ${id}`)
+            if (id in this.$store.state.layout.eventDetails) {
+                return this.$store.state.layout.eventDetails[id].colour + "--text"
+            } else {
+                return "black--text"
             }
         },
         getArray: function (byteArray) {

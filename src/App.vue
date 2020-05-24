@@ -50,11 +50,12 @@
   import mergCANMIO from './components/mergCANMIO'
   import mergCANPAN from './components/mergCANPAN'
   import mergCANCMD from './components/mergCANCMD'
+  import cbusErrors from './components/cbusErrors'
 
   export default {
     components:{
       // eslint-disable-next-line
-      hello_world, node_list, event_list, raw, mergDefault, mergCANMIO, mergCANPAN, mergCANCMD, settings
+      hello_world, node_list, event_list, raw, mergDefault, mergCANMIO, mergCANPAN, mergCANCMD, settings, cbusErrors
     },
     props: {
       source: String,
@@ -64,10 +65,11 @@
       mainComponent:"hello_world",
       menuItems:[
         {title:"Home", icon:"mdi-home", component:"hello_world"},
-        {title:"Nodes", icon:"mdi-home", component:"node_list"},
-        {title:"Events", icon:"mdi-home", component:"event_list"},
-        {title:"Settings", icon:"mdi-home", component:"settings"},
-        {title:"Raw", icon:"mdi-home", component:"raw"}
+        {title:"Nodes", icon:"mdi-timeline-outline", component:"node_list"},
+        {title:"Events", icon:"mdi-gesture-double-tap", component:"event_list"},
+        {title:"Settings", icon:"mdi-cog-outline", component:"settings"},
+        {title:"Cbus Errors", icon:"mdi-alert-circle", component:"cbusErrors"},
+        {title:"Raw", icon:"mdi-database", component:"raw"}
       ]
     }),
     methods: {

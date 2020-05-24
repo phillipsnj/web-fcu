@@ -76,7 +76,7 @@
                         </v-toolbar>
                     </template>
                     <template v-slot:item.event="{ item }">
-                        <p>{{ getEventName(item.event) }}</p>
+                        <p :class="getEventColour(item.event)">{{ getEventName(item.event) }}</p>
                     </template>
                     <template v-slot:item.actions="{ item }">
                         <v-icon

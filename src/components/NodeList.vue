@@ -2,7 +2,7 @@
   <v-container>
     <v-data-table :headers="headers"
                   :items="Object.values($store.state.nodes)"
-                  :items-per-page="5"
+                  :items-per-page="20"
                   class="elevation-1">
       <template v-slot:top>
         <v-toolbar flat>

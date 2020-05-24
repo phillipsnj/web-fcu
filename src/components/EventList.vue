@@ -3,7 +3,7 @@
         <v-card>
             <v-data-table :headers="headers"
                           :items="Object.values($store.state.events)"
-                          :items-per-page="5"
+                          :items-per-page="20"
                           class="elevation-1"
                           item-key="id"
                           :search="search">
@@ -203,7 +203,7 @@
                 const found = input.find(o => o.event === this.editedEvent.id)
                 console.log(`checkNode() ${this.SelectedEventNode.node} ${this.SelectedEventNode.consumer} : ${this.editedEvent.id} : found ${JSON.stringify(found)} : ${JSON.stringify(input)}`)
                 /*this.teachEventOutput = JSON.stringify(Object.values(this.SelectedEventNode.actions))*/
-                if (typeof(found) != "undefined") {
+                if (typeof (found) != "undefined") {
                     this.teachEventStatus = false
                     this.teachEventOutput = "Event already taught"
                 } else {
@@ -239,14 +239,22 @@
             },
             teach(selectedNode, selectedEvent) {
                 // eslint-disable-next-line no-console
-                console.log(`Teach : ${selectedNode.node} : : ${selectedEvent.id}`)
-                /*this.$socket.emit('EVLRN', {
+                console.log(`TEACH_EVENT : ${selectedNode.node} : ${selectedNode.module} : ${selectedEvent.id}`)
+                if (selectedNode.module == 'canmio-universal') {
+                    this.$root.send('TEACH_EVENT', {
+                        "nodeId": selectedNode.node,
+                        "eventName": selectedEvent.id,
+                        "eventId": 2,
+                        "eventVal": 2
+                    })
+                } else {
+                    this.$root.send('TEACH_EVENT', {
                         "nodeId": selectedNode.node,
                         "eventName": selectedEvent.id,
                         "eventId": 1,
                         "eventVal": 0
-                    }
-                )*/
+                    })
+                }
                 this.close()
             }
         }

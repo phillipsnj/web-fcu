@@ -13,7 +13,7 @@
             <v-tab :key="5">
                 IO Channels
             </v-tab>
-            <v-tab :key="3" @click="getAllEventVariables" v-if="node.EvCount > 0">
+            <v-tab :key="3" @click="getAllEventVariables" v-if="Object.keys(node.actions).length > 0">
                 Events
             </v-tab>
             <v-tab :key="4">
@@ -166,15 +166,18 @@
                         </v-row>
                         <v-row>
                             <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+2"
-                                                name="Num Pos"></NodeVariable>
+                                          name="Num Pos"></NodeVariable>
                             <NodeSliderVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+3"
                                                 name="Position 1"></NodeSliderVariable>
                             <NodeSliderVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+4"
-                                          name="Position 2" v-if="node.variables[SelectedChannelBaseNV+2] > 1"></NodeSliderVariable>
+                                                name="Position 2"
+                                                v-if="node.variables[SelectedChannelBaseNV+2] > 1"></NodeSliderVariable>
                             <NodeSliderVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+5"
-                                          name="Position 3" v-if="node.variables[SelectedChannelBaseNV+2] > 2"></NodeSliderVariable>
+                                                name="Position 3"
+                                                v-if="node.variables[SelectedChannelBaseNV+2] > 2"></NodeSliderVariable>
                             <NodeSliderVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+6"
-                                          name="Position 4" v-if="node.variables[SelectedChannelBaseNV+2] > 3"></NodeSliderVariable>
+                                                name="Position 4"
+                                                v-if="node.variables[SelectedChannelBaseNV+2] > 3"></NodeSliderVariable>
                         </v-row>
                     </v-container>
                     <v-container v-show="node.variables[SelectedChannelBaseNV]===5">
@@ -188,9 +191,9 @@
                         </v-row>
                         <v-row>
                             <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+3"
-                                                name="Threshold"></NodeVariable>
+                                          name="Threshold"></NodeVariable>
                             <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+4"
-                                                name="Hysteresis"></NodeVariable>
+                                          name="Hysteresis"></NodeVariable>
                         </v-row>
                     </v-container>
                     <v-container v-show="node.variables[SelectedChannelBaseNV]===6">
@@ -206,7 +209,7 @@
                             <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+2"
                                           name="Do Setup"></NodeVariable>
                             <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+3"
-                                                name="Threshold"></NodeVariable>
+                                          name="Threshold"></NodeVariable>
                             <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+3"
                                           name="Hysteresis"></NodeVariable>
                             <NodeVariable v-bind:node="node.node" :variable="SelectedChannelBaseNV+3"
@@ -221,7 +224,7 @@
                     </v-row>
                 </v-container>
             </v-tab-item>
-            <v-tab-item :key="3" v-if="node.EvCount > 0">
+            <v-tab-item :key="3" v-if="Object.keys(node.actions).length > 0">
                 <v-data-table
                         :headers="eventHeaders"
                         :items="Object.values(node.actions)"
@@ -295,7 +298,7 @@
                         </v-toolbar>
                     </template>
                     <template v-slot:item.event="{ item }">
-                        {{ getEventName(item.event) }}
+                        <p :class="getEventColour(item.event)">{{ getEventName(item.event) }}</p>
                     </template>
                     <template v-slot:item.actions="{ item }">
                         <v-icon
@@ -313,7 +316,7 @@
                         </v-icon>
                     </template>
                 </v-data-table>
-
+                {{ editedEvent }} :: {{ event_actions }}
 
             </v-tab-item>
             <v-tab-item :key="4">
@@ -370,7 +373,8 @@
         },
         mounted() {
             // eslint-disable-next-line no-console
-            console.log(`Local Mounted Completed: ${this.nodeId} :: ${this.node.node} :: ${this.node.EvCount}`)
+            console.log(`CANMIO : Mounted Completed: ${this.nodeId} :: ${this.node.node} :: ${this.node.EvCount}`)
+            this.editedEvent.actionId = Object.keys(this.node.actions)[0]
             /*if (this.node.EvCount > 0) {
                 this.$socket.emit('NERD', {"nodeId": this.nodeId})
             }*/
@@ -384,7 +388,7 @@
                     return 20
                 }
             },
-            nvTypes: function() {
+            nvTypes: function () {
                 console.log(`Selected Channel ${this.SelectedChannel}`)
                 if (this.SelectedChannel < 9) {
                     return this.NV_types1
@@ -395,19 +399,31 @@
         },
         methods: {
             getEventVariables: function (actionId) {
-                // eslint-disable-next-line no-console
-                console.log(`getEventVariables(${actionId})`)
-                //console.log(`getEventVariables() ${this.node.actions[actionId].variables[0]}`)
-                //this.EventIndex = [...Array(this.node.actions[actionId].variables[0]).keys()]
+                console.log(`CANMIO : getEventVariables(${actionId})`)
                 this.EventIndex = this.createSelectIndex(1, this.node.parameters[5])
-                //this.EventIndex = [1,2,3]
-                //this.SelectedEventVariable = actionId
+                this.$root.send('REVAL', {"nodeId": this.node.node, "actionId": actionId, "valueId": 0})
+                this.$root.send('REVAL', {"nodeId": this.node.node, "actionId": actionId, "valueId": 1})
+                for (let i = 2; i <= this.node.actions[actionId].variables[0]; i++) {
+                //for (let i = 2; i <= 20; i++) {
+                    console.log(`CANMIO : REVAL(${actionId}, ${i})`)
+                    this.$root.send('REVAL', {"nodeId": this.node.node, "actionId": actionId, "valueId": i})
+                }
 
-                /*for (let i = 1; i <= this.node.parameters[5]; i++) {
-                    this.$socket.emit('REVAL', {"nodeId": this.node.node, "actionId": actionId, "valueId": i})
-                }*/
-
+            },
+            getAllEventVariables: function () {
+                console.log(`CANMIO : getAllEventVariables() : ${this.node.EvCount}`)
+                for (let key in this.node.actions) {
+                //for (let i = 1; i <= Object.keys(this.node.actions).length; i++) {
+                    this.getEventVariables(key)
+                }
                 this.update_event_actions()
+                console.log(`CANMIO : getAllEventVariables() Completed : ${Object.keys(this.node.actions).length}`)
+            },
+            editEvent: function (item) {
+                console.log(`CANMIO : editEvent(${item.event})`)
+                this.getEventVariables(item.actionId)
+                this.eventDialog = true
+                this.editedEvent = item
 
             },
             updateBaseNV: function () {
@@ -420,14 +436,19 @@
                 for (let i = this.SelectedChannelBaseNV; i <= this.SelectedChannelBaseNV + 6; i++) {
                     this.getVariable(i)
                 }
+                this.update_event_actions()
             },
             update_event_actions: function () {
-                // eslint-disable-next-line no-console
-                console.log(`Update_event_actions`)
+                console.log(`CANMIO : Update_event_actions`)
                 this.event_actions = []
                 let x = 1
                 let y = 8
                 this.event_actions.push({"id": 0, "name": "Do Nothing"})
+                this.event_actions.push({"id": 1, "name": "Start of Day"})
+                this.event_actions.push({"id": 2, "name": "Wait 0.5"})
+                this.event_actions.push({"id": 3, "name": "Wait 1"})
+                this.event_actions.push({"id": 4, "name": "Wait 2"})
+                this.event_actions.push({"id": 5, "name": "Wait 5"})
                 for (let i = 16; i <= 121; i = i + 7) { //Get Channel Types
 
                     if (this.node.variables[i] == 1) {
@@ -447,13 +468,13 @@
                         this.event_actions.push({"id": y + 2, "name": `Ch-${x} OFF`})
                     } else if (this.node.variables[i] == 4) {
                         this.event_actions.push({"id": y, "name": `Ch-${x} AT1`})
-                        if (this.node.variables[i+2] > 1) {
+                        if (this.node.variables[i + 2] > 1) {
                             this.event_actions.push({"id": y + 1, "name": `Ch-${x} AT2`})
                         }
-                        if (this.node.variables[i+2] > 2) {
+                        if (this.node.variables[i + 2] > 2) {
                             this.event_actions.push({"id": y + 2, "name": `Ch-${x} AT3`})
                         }
-                        if (this.node.variables[i+2] > 3) {
+                        if (this.node.variables[i + 2] > 3) {
                             this.event_actions.push({"id": y + 3, "name": `Ch-${x} AT4`})
                         }
                     }

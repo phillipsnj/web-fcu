@@ -47,7 +47,7 @@
         },
         methods: {
             updateEV: function () {
-                console.log(`Update Event Variable`)
+                console.log(`Update Event Variable : ${this.node} : ${this.action}`)
                 /*let output = {}
                 output['nodeId'] = this.node
                 output['actonId'] = this.action
