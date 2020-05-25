@@ -298,7 +298,7 @@
                         </v-toolbar>
                     </template>
                     <template v-slot:item.event="{ item }">
-                        <p :class="getEventColour(item.event)">{{ getEventName(item.event) }}</p>
+                        <displayEventName :id="item.event"></displayEventName>
                     </template>
                     <template v-slot:item.actions="{ item }">
                         <v-icon
@@ -338,13 +338,14 @@
     import NodeVariable from './NodeVariable'
     import NodeBitVariable from './NodeBitVariable'
     import NodeSliderVariable from './NodeSliderVariable'
+    import displayEventName from './displayEventName'
 
     export default {
         name: "mergDefault",
         mixins: [nodeMixin],
         components: {
             // eslint-disable-next-line
-            NodeParameters, NodeVariable, NodeBitVariable, NodeSliderVariable
+            NodeParameters, NodeVariable, NodeBitVariable, NodeSliderVariable, displayEventName
         },
         data: function () {
             return {

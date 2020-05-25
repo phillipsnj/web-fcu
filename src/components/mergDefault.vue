@@ -14,6 +14,9 @@
             <v-tab :key="3" @click="getAllEventVariables" v-if="node.EvCount > 0">
                 Events
             </v-tab>
+            <v-tab :key="5">
+                Settings
+            </v-tab>
             <v-tab :key="4">
                 Debug
             </v-tab>
@@ -76,7 +79,7 @@
                         </v-toolbar>
                     </template>
                     <template v-slot:item.event="{ item }">
-                        <p :class="getEventColour(item.event)">{{ getEventName(item.event) }}</p>
+                        <displayEventName :id="item.event"></displayEventName>
                     </template>
                     <template v-slot:item.actions="{ item }">
                         <v-icon
@@ -96,6 +99,9 @@
                 </v-data-table>
 
 
+            </v-tab-item>
+            <v-tab-item :key="5">
+                <nodeDetails :nodeId="nodeId"></nodeDetails>
             </v-tab-item>
             <v-tab-item :key="4">
                 <v-layout row wrap>
@@ -124,13 +130,15 @@
     import {nodeMixin} from '../mixins/nodeMixin.js'
     import NodeVariable from './NodeVariable'
     import NodeEventVariable from './NodeEventVariable'
+    import displayEventName from './displayEventName'
+    import nodeDetails from './nodeDetails'
 
     export default {
         mixins: [nodeMixin],
         name: "mergDefault",
         components: {
             // eslint-disable-next-line
-            NodeParameters, NodeVariable, NodeEventVariable
+            NodeParameters, NodeVariable, NodeEventVariable, displayEventName, nodeDetails
         },
         //props: ['node'],
         data: function () {

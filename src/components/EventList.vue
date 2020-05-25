@@ -8,7 +8,8 @@
                           item-key="id"
                           :search="search">
                 <template v-slot:item.id="{ item }">
-                    <p :class="getEventColour(item.id)">{{ getEventName(item.id) }}</p>
+                    <displayEventName :id="item.id"></displayEventName>
+<!--                    <p :class="getEventColour(item.id)">{{ getEventName(item.id) }}</p>-->
                 </template>
                 <template v-slot:item.status="{ item }">
                     <v-chip color="green" dark v-if="item.status=='on'">On</v-chip>
@@ -116,9 +117,10 @@
 </template>
 
 <script>
-
+    import displayEventName from './displayEventName'
     export default {
         name: 'event_list',
+        components: {displayEventName},
         data: function () {
             return {
                 search: '',
@@ -153,6 +155,11 @@
             }
         },
         methods: {
+            displayEventId(event){
+                if (event.id in this.$store.state.layout.eventDetails) {
+                    return this.$store.state.layout.eventDetails[event.id].name
+                }
+            },
             getEventName(id) {
                 if (id in this.$store.state.layout.eventDetails) {
                     return this.$store.state.layout.eventDetails[id].name

@@ -11,6 +11,9 @@
           <v-btn color="blue darken-1" text @click="checkModules">Check Modules</v-btn>
         </v-toolbar>
       </template>
+      <template v-slot:item.node="{ item }">
+        <displayNodeName :id="item.node"></displayNodeName>
+      </template>
       <template v-slot:item.flim="{ item }">
         <v-chip color="amber" dark v-if="item.flim">Flim</v-chip>
         <v-chip color="green" dark v-else>Slim</v-chip>
@@ -30,8 +33,10 @@
 </template>
 
 <script>
+  import displayNodeName from './displayNodeName'
   export default {
     name: 'node_list',
+    components: {displayNodeName},
     data: function() {
       return {
         headers: [

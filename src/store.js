@@ -15,7 +15,8 @@ export default new Vuex.Store({
         layout: {},
         display_component: "hello_world",
         selected_node_id: 0,
-        debug : false
+        debug : false,
+        colours :["black","red","pink","purple","deep-purple","indigo","blue","light-blue","cyan","teal","green","light-green","lime","yellow","amber","orange","deep-orange","brown","blue-grey","grey"]
     },
     mutations: {
         SOCKET_NODES (state, data){

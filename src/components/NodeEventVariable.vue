@@ -48,12 +48,6 @@
         methods: {
             updateEV: function () {
                 console.log(`Update Event Variable : ${this.node} : ${this.action}`)
-                /*let output = {}
-                output['nodeId'] = this.node
-                output['actonId'] = this.action
-                output['variableId'] = this.variable
-                output['variableValue'] = this.variableLocal
-                this.$store.commit('UPDATE_NODE_EVENT_VARIABLE', output)*/
                 this.$root.send('EVLRN', {
                     "nodeId": this.node,
                     "actionId": this.action,

@@ -182,7 +182,7 @@
                             </v-toolbar>
                         </template>
                         <template v-slot:item.event="{ item }">
-                            <p :class="getEventColour(item.event)">{{ getEventName(item.event) }}</p>
+                            <displayEventName :id="item.event"></displayEventName>
                         </template>
                         <template v-slot:item.actions="{ item }">
 
@@ -220,6 +220,7 @@
     import {nodeMixin} from '../mixins/nodeMixin.js'
     import NodeEventVariable from './NodeEventVariable'
     import NodeEventBitVariable from "./NodeEventBitVariable";
+    import displayEventName from './displayEventName'
 
     export default {
         name: "mergCANPAN",
@@ -227,7 +228,7 @@
         //props: ['node'],
         components: {
             // eslint-disable-next-line
-            NodeParameters, NodeEventVariable, NodeEventBitVariable
+            NodeParameters, NodeEventVariable, NodeEventBitVariable, displayEventName
         },
         data: function () {
             return {}
