@@ -6,8 +6,10 @@
                           placeholder="Nama"
                           v-model=nodeDetails.name
                           @change="update()"
+                          :text-color="$store.state.layout.nodeDetails[this.nodeId].colour"
             >
             </v-text-field>
+            <displayNodeName :id="nodeId"></displayNodeName>
         </v-col>
         <v-col cols="12" sm="6" md="4">
             <v-select
@@ -22,8 +24,11 @@
 </template>
 
 <script>
+    import displayNodeName from './displayNodeName'
+
     export default {
         name: "nodeDetails",
+        components: {displayNodeName},
         data: () => ({
             nodeDetails: {
                 name: "Test",
@@ -43,6 +48,9 @@
             },
             node: function () {
                 return this.$store.state.nodes[this.nodeId]
+            },
+            displayColour: function() {
+                return this.$store.state.layout.nodeDetails[this.nodeId].colour+'--text'
             }
         },
         methods: {

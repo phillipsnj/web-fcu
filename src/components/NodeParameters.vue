@@ -69,6 +69,16 @@
                                   readonly
                                   :value=node.parameters[8]></v-text-field>
                 </v-card>
+                <v-card class="xs6 md3 pa-3" flat>
+                    <v-text-field label="Events" placeholder="Flags"
+                                  readonly
+                                  :value=node.EvCount></v-text-field>
+                </v-card>
+                <v-card class="xs6 md3 pa-3" flat>
+                    <v-text-field label="NERD Events" placeholder="NERD Events"
+                                  readonly
+                                  :value=Object.values(node.actions).length></v-text-field>
+                </v-card>
             </v-row>
         </v-container>
     </v-container>

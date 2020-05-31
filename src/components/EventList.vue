@@ -40,14 +40,13 @@
                                         </v-row>
                                     </v-container>
                                 </v-card-text>
-                                <v-card-text>
-                                    <v-container grid-list-md>
-                                        <v-row>
-                                            <v-text-field v-model="editedEvent.colour"
-                                                          label="Colour"></v-text-field>
-                                        </v-row>
-                                    </v-container>
-                                </v-card-text>
+                                <displayEventName :id="editedEvent.id"></displayEventName>
+                                <v-select
+                                        label="Colour"
+                                        v-model="editedEvent.colour"
+                                        :items="$store.state.colours"
+                                        outlined
+                                ></v-select>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
                                     <v-btn color="blue darken-1" text @click="editDialog=false">Cancel</v-btn>
@@ -183,6 +182,11 @@
             },
             sendEvent(nodeId, eventId, type, action) {
                 console.log(`sendEvent ${type} : ${nodeId} : ${eventId} : ${action}`)
+                if (action=='On') {
+                    this.$root.send('ACON', {"nodeId":nodeId, "eventId":eventId})
+                } else {
+                    this.$root.send('ACOF', {"nodeId":nodeId, "eventId":eventId})
+                }
             },
             editEvent(item) {
                 //let Event = Object.assign({}, item)

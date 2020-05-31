@@ -34,7 +34,6 @@ export const nodeMixin = {
         for (let i = 1; i <= this.node.parameters[6]; i++) {
             this.getVariable(i)
         }
-        // eslint-disable-next-line no-console
         console.log(`Mounted Completed: ${this.nodeId} :: ${this.node.node} :: ${this.node.EvCount}`)
         if (this.node.EvCount > 0) {
             console.log(`NERD : ${this.node.node}`)

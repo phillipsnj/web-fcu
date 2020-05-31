@@ -373,12 +373,11 @@
             }
         },
         mounted() {
-            // eslint-disable-next-line no-console
             console.log(`CANMIO : Mounted Completed: ${this.nodeId} :: ${this.node.node} :: ${this.node.EvCount}`)
             this.editedEvent.actionId = Object.keys(this.node.actions)[0]
-            /*if (this.node.EvCount > 0) {
-                this.$socket.emit('NERD', {"nodeId": this.nodeId})
-            }*/
+            if (this.node.EvCount > 0) {
+                this.$root.send('NERD', {"nodeId": this.nodeId})
+            }
 
         },
         computed: {
