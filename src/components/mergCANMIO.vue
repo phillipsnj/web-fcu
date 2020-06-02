@@ -267,10 +267,22 @@
                                                             label="No of Event Variables" readonly></v-text-field>
                                                 </v-col>
                                             </v-row>
+                                            <v-row>
+                                                <v-select
+                                                        :label="`Happening`"
+                                                        v-model="node.actions[editedEvent.actionId].variables[1]"
+                                                        :items="happening_actions"
+                                                        item-text="name"
+                                                        item-value="id"
+                                                        outlined
+                                                        @change="updateEV(node.node, node.actions[editedEvent.actionId].event, node.actions[editedEvent.actionId].actionId,
+                                                      n, parseInt(node.actions[editedEvent.actionId].variables[1]))"
+                                                ></v-select>
+                                            </v-row>
                                             <v-row v-for="n in numberEventVariables" :key="n" dense>
                                                 <v-col cols="12" sm="6" md="4" v-if="n==1">
                                                     <v-text-field
-                                                            label="Value"
+                                                            label="Happening Value"
                                                             v-model="node.actions[editedEvent.actionId].variables[n]"
                                                             @change="updateEV(node.node, node.actions[editedEvent.actionId].event, node.actions[editedEvent.actionId].actionId,
                                                       n, parseInt(node.actions[editedEvent.actionId].variables[n]))"
@@ -316,7 +328,7 @@
                         </v-icon>
                     </template>
                 </v-data-table>
-                {{ editedEvent }} :: {{ event_actions }}
+                {{ happening_actions }}
 
             </v-tab-item>
             <v-tab-item :key="4">
@@ -352,6 +364,7 @@
                 SelectedChannel: 1,
                 SelectedChannelBaseNV: 16,
                 event_actions: [],
+                happening_actions: [],
                 NV_types1: [
                     {"id": 0, "name": "Input"},
                     {"id": 1, "name": "Output"},
@@ -404,7 +417,7 @@
                 this.$root.send('REVAL', {"nodeId": this.node.node, "actionId": actionId, "valueId": 0})
                 this.$root.send('REVAL', {"nodeId": this.node.node, "actionId": actionId, "valueId": 1})
                 for (let i = 2; i <= this.node.actions[actionId].variables[0]; i++) {
-                //for (let i = 2; i <= 20; i++) {
+                    //for (let i = 2; i <= 20; i++) {
                     console.log(`CANMIO : REVAL(${actionId}, ${i})`)
                     this.$root.send('REVAL', {"nodeId": this.node.node, "actionId": actionId, "valueId": i})
                 }
@@ -413,10 +426,11 @@
             getAllEventVariables: function () {
                 console.log(`CANMIO : getAllEventVariables() : ${this.node.EvCount}`)
                 for (let key in this.node.actions) {
-                //for (let i = 1; i <= Object.keys(this.node.actions).length; i++) {
+                    //for (let i = 1; i <= Object.keys(this.node.actions).length; i++) {
                     this.getEventVariables(key)
                 }
                 this.update_event_actions()
+                this.update_happening_actions()
                 console.log(`CANMIO : getAllEventVariables() Completed : ${Object.keys(this.node.actions).length}`)
             },
             editEvent: function (item) {
@@ -437,6 +451,7 @@
                     this.getVariable(i)
                 }
                 this.update_event_actions()
+                this.update_happening_actions()
             },
             update_event_actions: function () {
                 console.log(`CANMIO : Update_event_actions`)
@@ -480,6 +495,43 @@
                     }
                     x = x + 1
                     y = y + 5
+                }
+            },
+            update_happening_actions: function () {
+                console.log(`CANMIO : Update_happening_actions`)
+                this.happening_actions = []
+                let x = 1
+                let y = 8
+                this.happening_actions.push({"id": 0, "name": "No Happening"})
+                this.happening_actions.push({"id": 1, "name": "Produced Startup Event"})
+                for (let i = 16; i <= 121; i = i + 7) { //Get Channel Types
+
+                    if (this.node.variables[i] == 1) {
+                        //output = {"id":y, "name":"Ch-" + x +" Changed"}
+                        this.happening_actions.push({"id": y, "name": `Ch-${x} Changed`})
+                    } else if (this.node.variables[i] == 0) {
+                        this.happening_actions.push({"id": y, "name": `Ch-${x} Changed`})
+                        this.happening_actions.push({"id": y + 1, "name": `Ch-${x} TWO_ON`})
+                    } else if (this.node.variables[i] == 2) {
+                        this.happening_actions.push({"id": y, "name": `Ch-${x} Reached Off`})
+                        this.happening_actions.push({"id": y + 1, "name": `Ch-${x} Reached Mid`})
+                        this.happening_actions.push({"id": y + 2, "name": `Ch-${x} Reached On`})
+                    } else if (this.node.variables[i] == 3) {
+                        this.happening_actions.push({"id": y, "name": `Ch-${x} Changed`})
+                    } else if (this.node.variables[i] == 4) {
+                        this.happening_actions.push({"id": y, "name": `Ch-${x} AT1`})
+                        if (this.node.variables[i + 2] > 1) {
+                            this.happening_actions.push({"id": y + 1, "name": `Ch-${x} AT2`})
+                        }
+                        if (this.node.variables[i + 2] > 2) {
+                            this.happening_actions.push({"id": y + 2, "name": `Ch-${x} AT3`})
+                        }
+                        if (this.node.variables[i + 2] > 3) {
+                            this.happening_actions.push({"id": y + 3, "name": `Ch-${x} AT4`})
+                        }
+                    }
+                    x = x + 1
+                    y = y + 4
                 }
             }
         },
