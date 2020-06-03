@@ -6,7 +6,7 @@
                           placeholder="Nama"
                           v-model=nodeDetails.name
                           @change="update()"
-                          :text-color="$store.state.layout.nodeDetails[this.nodeId].colour"
+                          :text-color="nodeDetails.colour"
             >
             </v-text-field>
             <displayNodeName :id="nodeId"></displayNodeName>
@@ -19,6 +19,15 @@
                     outlined
                     @change="update()"
             ></v-select>
+        </v-col>
+        <v-col cols="12" sm="6" md="4">
+            <v-combobox
+                    v-model="nodeDetails.group"
+                    :items="groupList()"
+                    label="Select a group"
+                    outlined
+                    @change="update()"
+            ></v-combobox>
         </v-col>
     </v-container>
 </template>
@@ -37,9 +46,11 @@
         }),
         props: ['nodeId'],
         mounted() {
+            console.log(`nodeDetails : ${this.nodeId}`)
             if (this.nodeId in this.$store.state.layout.nodeDetails) {
                 this.nodeDetails.name = this.$store.state.layout.nodeDetails[this.nodeId].name
                 this.nodeDetails.colour = this.$store.state.layout.nodeDetails[this.nodeId].colour
+                this.nodeDetails.group = this.$store.state.layout.nodeDetails[this.nodeId].group
             }
         },
         computed: {
@@ -49,8 +60,8 @@
             node: function () {
                 return this.$store.state.nodes[this.nodeId]
             },
-            displayColour: function() {
-                return this.$store.state.layout.nodeDetails[this.nodeId].colour+'--text'
+            displayColour: function () {
+                return this.$store.state.layout.nodeDetails[this.nodeId].colour + '--text'
             }
         },
         methods: {
@@ -58,7 +69,19 @@
                 this.$store.state.layout.nodeDetails[this.nodeId] = {}
                 this.$store.state.layout.nodeDetails[this.nodeId].name = this.nodeDetails.name
                 this.$store.state.layout.nodeDetails[this.nodeId].colour = this.nodeDetails.colour
+                this.$store.state.layout.nodeDetails[this.nodeId].group = this.nodeDetails.group
                 this.$root.send('UPDATE_LAYOUT_DETAILS', this.$store.state.layout)
+            },
+            groupList() {
+                let output = []
+                for (let node in this.$store.state.layout.nodeDetails) {
+                    console.log(`grouplist ${node} `)
+                    if (this.$store.state.layout.nodeDetails[node].group) {
+                        console.log(`groupList :: ${this.$store.state.layout.nodeDetails[node].group}`)
+                        output.push(this.$store.state.layout.nodeDetails[node].group)
+                    }
+                }
+                return output
             }
         }
     }

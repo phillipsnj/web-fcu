@@ -1,13 +1,21 @@
 <template>
   <v-container>
     <v-data-table :headers="headers"
-                  :items="Object.values($store.state.nodes)"
+                  :items="nodeList"
                   :items-per-page="20"
-                  class="elevation-1">
+                  class="elevation-1"
+                  :search="search">
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>Modules</v-toolbar-title>
           <v-spacer></v-spacer>
+          <v-text-field
+                  v-model="search"
+                  append-icon="mdi-magnify"
+                  label="Search"
+                  single-line
+                  hide-details
+          ></v-text-field>
           <v-btn color="blue darken-1" text @click="checkModules">Check Modules</v-btn>
         </v-toolbar>
       </template>
@@ -28,6 +36,7 @@
     </v-data-table>
     <v-row v-if="$store.state.debug">
       <h2>Debug Mode</h2>
+      {{ nodeList[0] }}
     </v-row>
   </v-container>
 </template>
@@ -41,16 +50,39 @@
       return {
         headers: [
           { text: 'node', value: 'node' },
+          {text: 'name', value: 'name', align: ' d-none'},
           { text: 'module', value: 'module' },
           { text: 'flim', value: 'flim' },
-          { text: 'flags', value: 'flags' },
+          { text: 'group', value: 'group' },
           { text: 'status', value: 'status' },
           { text: 'component', value: 'component' },
           {text: 'Actions', value: 'actions', sortable: false }
         ],
+        search: '',
         dialog: false,
         nodeComponent: 'noModule',
         selectedNode: {}
+      }
+    },
+    mounted() {
+      this.checkModules()
+    },
+    watch: {
+      nodeList: function () {
+        this.displayNodeList = []
+        for (let i in this.nodeList) {
+          console.log(`Update Diaplay List ${i}`)
+          if (this.$store.state.layout.nodeDetails[this.nodeList[i].node]) {
+            this.nodeList[i].name = this.$store.state.layout.nodeDetails[this.nodeList[i].node].name
+            this.nodeList[i].colour = this.$store.state.layout.nodeDetails[this.nodeList[i].node].colour
+            this.nodeList[i].group = this.$store.state.layout.nodeDetails[this.nodeList[i].node].group
+          }
+        }
+      }
+    },
+    computed : {
+      nodeList: function () {
+        return Object.values(this.$store.state.nodes)
       }
     },
     methods: {
