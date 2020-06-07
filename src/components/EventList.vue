@@ -159,9 +159,11 @@
                 this.displayEventList = []
                 for (let i in this.eventList) {
                     console.log(`Update Diaplay List ${i}`)
-                    this.eventList[i].name = this.$store.state.layout.eventDetails[this.eventList[i].id].name
-                    this.eventList[i].colour = this.$store.state.layout.eventDetails[this.eventList[i].id].colour
-                    this.eventList[i].group = this.$store.state.layout.eventDetails[this.eventList[i].id].group
+                    if (this.$store.state.layout.eventDetails[this.eventList[i].id]) {
+                        this.eventList[i].name = this.$store.state.layout.eventDetails[this.eventList[i].id].name
+                        this.eventList[i].colour = this.$store.state.layout.eventDetails[this.eventList[i].id].colour
+                        this.eventList[i].group = this.$store.state.layout.eventDetails[this.eventList[i].id].group
+                    }
                 }
             }
         },
