@@ -17,8 +17,6 @@
         data: () => ({
             label: "",
             variableLocal: 0,
-            variableLocal1: 0,
-            variableLocal2: 0,
             isReadonly : false
         }),
         props: ['node', 'variable1', 'variable2', 'name', 'readonly'],
