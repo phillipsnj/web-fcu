@@ -6,6 +6,7 @@
                 outlined
                 @change="updateNV"
                 :readonly="isReadonly"
+                :rules="rules"
         >
         </v-text-field>
     </v-card>
@@ -15,6 +16,11 @@
     export default {
         name: "NodeVariable",
         data: () => ({
+            rules: [
+                value => !!value || 'Required',
+                value => value >= 0 || 'Cannot be a negative number',
+                value => value <= 255 || 'Number to High'
+            ],
             label: "",
             variableLocal: 0,
             isReadonly : false
